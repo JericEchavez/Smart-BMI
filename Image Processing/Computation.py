@@ -48,6 +48,10 @@ hx.reset()
 hx.tare()
 print("Add weight now...")
 
+
+
+
+
 weightCounter = 0
 processing = False
 
@@ -59,18 +63,34 @@ while True:
             hx.power_down()
             hx.power_up()
             time.sleep(0.1)
-            
-            if val > 10:
+            if val < 10:
+                # Title Screen
+                cv2.namedWindow("window", cv2.WINDOW_NORMAL);
+                cv2.setWindowProperty("window", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);
+
+                photo = cv2.imread('Screen/smartBmi.png')
+                cv2.imshow("window", photo)
+                key = cv2.waitKey(1) 
+                
+            elif val > 10:
                 #print(val)
                 weightCounter += 1
                 if processing == False:
                     print('Processing....')
                     processing = True
+                    print(weightCounter)
+                    
+                    cv2.namedWindow("window", cv2.WINDOW_NORMAL);
+                    cv2.setWindowProperty("window", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);
+
+                    photo = cv2.imread('Screen/processing.png')
+                    cv2.imshow("window", photo)
+                    key = cv2.waitKey(2)
                 print(weightCounter)
             else:
                 print('.')
                 
-            if weightCounter == 10:
+            if weightCounter == 5:
                 weightCounter = 0
                 break
             
@@ -114,7 +134,7 @@ while True:
             cv2.destroyAllWindows()
 
             img_ = cv2.imread('saved_img.jpg', cv2.IMREAD_ANYCOLOR)
-            img_resized = cv2.imwrite(filename='images/example_02.jpg', img=img_)
+            img_resized = cv2.imwrite(filename='example_02.jpg', img=img_)
             print("Image saved!")
 
 
@@ -128,7 +148,7 @@ while True:
                 cv2.waitKey(0)
                 cv2.destroyAllWindows()
 
-            img_path = "images/example_02.jpg"
+            img_path = "example_02.jpg"
 
             # Read image and preprocess
             image = cv2.imread(img_path)
@@ -211,9 +231,16 @@ while True:
     ################################
     # BMI
     ################################
+    underweight = False
+    normal = False
+    overweight = False
+    obese = False
+    
+    
+    
     
     f_Weight = val
-    f_Height = userHeight
+    f_Height = round(userHeight,2)
     
     heightInMeters = f_Height/100
     squared = heightInMeters*heightInMeters
@@ -221,8 +248,8 @@ while True:
     f_Bmi = f_Weight/squared
     s_Suggestion = ""
     
-    bmiCategoryList = ["underweight", "normal weight", "overweight", "obese", "strong obesity"]
-    bmiNumbers = [18.4, 24.9, 29.9, 40]
+    bmiCategoryList = ["underweight", "normal weight", "overweight", "obese"]
+    bmiNumbers = [18.4, 24.9, 29.9]
     s_BmiCategory = bmiCategoryList[bisect.bisect_left(bmiNumbers,f_Bmi)]
 
     print("\nYour BMI is: ",round(f_Bmi,2),"Kg/m2. That means",s_BmiCategory)
@@ -230,26 +257,89 @@ while True:
     #Suggestions
     if s_BmiCategory == "underweight":
         s_Suggestion = "Suggestion for Underweight goes here"
-        
+        underweight = True
+                
     elif s_BmiCategory == "normal weight":
         s_Suggestion = "Suggestion for Normal goes here"
+        normal = True
     
     elif s_BmiCategory == "overweight":
         s_Suggestion = "Suggestion for Overweight goes here"
+        overweight = True
     
     elif s_BmiCategory == "obese":
         s_Suggestion = "Suggestion for Obese goes here"
-    
-    elif s_BmiCategory == "strong obesity":
-        s_Suggestion = "Suggestion for Strong Obese goes here"
+        obese = True
     
     s_Height = str(f_Height)  # float to string conversion
     s_Weight = str(f_Weight)
     s_Bmi = str(round(f_Bmi,2))
     
     
-    
     os.system("sudo chmod a+w /dev/usb/lp0")
-    os.system("sudo echo -e '\n\n\nSmart BMI \n\nHeight: " +s_Height+ "\nWeight: " +s_Weight+ "\nBMI: " +s_Bmi+ "\nObesity Level: " +s_BmiCategory+ "\n\n\nSuggested Diet: \n\n"+s_Suggestion+"\n\n\n\n\n\n' > /dev/usb/lp0")
-    print('Get out!')
-    time.sleep(5)
+    os.system("sudo echo -e '\n\n\nSmart BMI \n\nHeight: " +s_Height+ " cm\nWeight: " +s_Weight+ " kg\nBMI: " +s_Bmi+ " kg/m2\nObesity Level: " +s_BmiCategory+ "\n\n\nSuggested Diet: \n\n"+s_Suggestion+"\n\n\n\n\n\n' > /dev/usb/lp0")
+    #time.sleep(5)
+    
+    if underweight == True:  
+        cv2.namedWindow("window", cv2.WINDOW_NORMAL);
+        cv2.setWindowProperty("window", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);
+
+        photo = cv2.imread('Screen/underweight.png')
+        cv2.imshow("window", photo)
+        key = cv2.waitKey(2)
+
+        process = 0
+        for x in range (8):
+            process+=1
+            time.sleep(1)
+            if process == 7:
+                cv2.destroyAllWindows()
+                break
+    
+    elif normal == True:  
+        cv2.namedWindow("window", cv2.WINDOW_NORMAL);
+        cv2.setWindowProperty("window", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);
+
+        photo = cv2.imread('Screen/normal.png')
+        cv2.imshow("window", photo)
+        key = cv2.waitKey(2)
+
+        process = 0
+        for x in range (8):
+            process+=1
+            time.sleep(1)
+            if process == 7:
+                cv2.destroyAllWindows()
+                break
+    
+    elif overweight == True:  
+        cv2.namedWindow("window", cv2.WINDOW_NORMAL);
+        cv2.setWindowProperty("window", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);
+
+        photo = cv2.imread('Screen/overweight.png')
+        cv2.imshow("window", photo)
+        key = cv2.waitKey(2)
+
+        process = 0
+        for x in range (8):
+            process+=1
+            time.sleep(1)
+            if process == 7:
+                cv2.destroyAllWindows()
+                break
+    
+    else:  
+        cv2.namedWindow("window", cv2.WINDOW_NORMAL);
+        cv2.setWindowProperty("window", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);
+
+        photo = cv2.imread('Screen/obese.png')
+        cv2.imshow("window", photo)
+        key = cv2.waitKey(2)
+
+        process = 0
+        for x in range (8):
+            process+=1
+            time.sleep(1)
+            if process == 7:
+                cv2.destroyAllWindows()
+                break
