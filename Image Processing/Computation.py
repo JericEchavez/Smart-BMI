@@ -42,7 +42,7 @@ def cleanAndExit():
 hx = HX711(5, 6)
 
 hx.set_reading_format("MSB", "MSB")
-hx.set_reference_unit(7846.82) #-7846.82
+hx.set_reference_unit(-8146) #-7846.82
 
 hx.reset()
 hx.tare()
@@ -62,7 +62,7 @@ while True:
         
             hx.power_down()
             hx.power_up()
-            time.sleep(0.1)
+            time.sleep(0.01)
             if val < 10:
                 # Title Screen
                 cv2.namedWindow("window", cv2.WINDOW_NORMAL);
@@ -111,17 +111,17 @@ while True:
 
     while True:
         if isHeightValid == False:
-            key = cv2. waitKey(1)
+            key = cv2. waitKey(2)
             webcam = cv2.VideoCapture(0)
-            webcam.set(3, 800)  
-            webcam.set(4, 600)
+            webcam.set(3, 1920)  
+            webcam.set(4, 1080)
             webcam.set(cv2.CAP_PROP_AUTOFOCUS, 0)
 
             check, frame = webcam.read()
             print(check) #prints true as long as the webcam is running
             print(frame) #prints matrix values of each framecd 
             cv2.imshow("Capturing", frame)
-            key = cv2.waitKey(1)
+            key = cv2.waitKey(2)
                
              
                
@@ -145,7 +145,7 @@ while True:
             def show_images(images):
                 for i, img in enumerate(images):
                     cv2.imshow("image_" + str(i), img)
-                cv2.waitKey(0)
+                cv2.waitKey(2)
                 cv2.destroyAllWindows()
 
             img_path = "example_02.jpg"
@@ -186,7 +186,7 @@ while True:
             box = perspective.order_points(box)
             (tl, tr, br, bl) = box
             dist_in_pixel = euclidean(tl, tr)
-            dist_in_cm = 20.2
+            dist_in_cm = 19.8
             pixel_per_cm = dist_in_pixel/dist_in_cm
 
 
@@ -224,7 +224,25 @@ while True:
         if userHeight < 100:
             isHeightValid = False
         else:
+            cv2.imwrite(filename='final.jpg', img=image)
+            cv2.namedWindow("window", cv2.WINDOW_NORMAL);
+            cv2.setWindowProperty("window", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN);
+            photo = cv2.imread('final.jpg')
+            key = cv2.waitKey(2)
+            cv2.imshow("window", photo)
+            key = cv2.waitKey(2)
+            
+            process = 0
+            for x in range (4):
+                process+=1
+                time.sleep(1)
+                if process == 3:
+                    cv2.destroyAllWindows()
+                    break
             break
+            
+
+
 
 
 
@@ -248,27 +266,27 @@ while True:
     f_Bmi = f_Weight/squared
     s_Suggestion = ""
     
-    bmiCategoryList = ["underweight", "normal weight", "overweight", "obese"]
+    bmiCategoryList = ["Underweight", "Normal", "Overweight", "Obese"]
     bmiNumbers = [18.4, 24.9, 29.9]
     s_BmiCategory = bmiCategoryList[bisect.bisect_left(bmiNumbers,f_Bmi)]
 
     print("\nYour BMI is: ",round(f_Bmi,2),"Kg/m2. That means",s_BmiCategory)
 
     #Suggestions
-    if s_BmiCategory == "underweight":
-        s_Suggestion = "Suggestion for Underweight goes here"
+    if s_BmiCategory == "Underweight":
+        s_Suggestion = "When you are underweight, you may feel full faster. Eat five to six smaller meals during the day rather than two or three large meals. Choose whole-grain breads, pastas and cereals, fruits and vegetables, dairy products, lean protein sources, and nuts and seeds.Try cardiovascular exercise for 20mins - jumping jack, jog in place, squat jumps, staircase exercise, and running."
         underweight = True
                 
-    elif s_BmiCategory == "normal weight":
-        s_Suggestion = "Suggestion for Normal goes here"
+    elif s_BmiCategory == "Normal":
+        s_Suggestion = "You are in the recommended weight range for your height. But your health may still be at risk if you are not getting regular physical activity (jumping jack, jog in place, squat jumps, stair case exercise, and running) and practicing healthy eating. "
         normal = True
     
-    elif s_BmiCategory == "overweight":
-        s_Suggestion = "Suggestion for Overweight goes here"
+    elif s_BmiCategory == "Overweight":
+        s_Suggestion = "Start your day with a high-protein meal especially warm, solid food helps you feel fuller and less hungry later. Shoot for 350-400 calories with at least 25 grams of protein. Focus on activities that put minimal stress on your joints, like walking, swimming, or water exercises. Your goal should be to get 30 minutes of exercise a day, five days a week."
         overweight = True
     
-    elif s_BmiCategory == "obese":
-        s_Suggestion = "Suggestion for Obese goes here"
+    else:
+        s_Suggestion = "Avoid from eating or drinking foods, such as sugar sweetened beverages, fruit juice, refined grains, Other highly processed foods, such as fast food 5-6 days of cardio performed at least twice a day that adds up to 60 minutes per day. Cardio Activities Include walking, jogging, biking or anything else you can think of to keep you moving."
         obese = True
     
     s_Height = str(f_Height)  # float to string conversion
@@ -277,7 +295,7 @@ while True:
     
     
     os.system("sudo chmod a+w /dev/usb/lp0")
-    os.system("sudo echo -e '\n\n\nSmart BMI \n\nHeight: " +s_Height+ " cm\nWeight: " +s_Weight+ " kg\nBMI: " +s_Bmi+ " kg/m2\nObesity Level: " +s_BmiCategory+ "\n\n\nSuggested Diet: \n\n"+s_Suggestion+"\n\n\n\n\n\n' > /dev/usb/lp0")
+    os.system("sudo echo -e '\n\n\nSmart BMI \n\nHeight: " +s_Height+ " cm\nWeight: " +s_Weight+ " kg\nBMI: " +s_Bmi+ " kg/m2\nBMI Category: " +s_BmiCategory+ "\n\n\nSuggested Diet: \n\n"+s_Suggestion+"\n\n\n\n\n\n' > /dev/usb/lp0")
     #time.sleep(5)
     
     if underweight == True:  
