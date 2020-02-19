@@ -42,7 +42,7 @@ def cleanAndExit():
 hx = HX711(5, 6)
 
 hx.set_reading_format("MSB", "MSB")
-hx.set_reference_unit(-8146) #-7846.82
+hx.set_reference_unit(-6300.82) #-7846.82
 
 hx.reset()
 hx.tare()
@@ -62,7 +62,7 @@ while True:
         
             hx.power_down()
             hx.power_up()
-            time.sleep(0.01)
+            time.sleep(1)
             if val < 10:
                 # Title Screen
                 cv2.namedWindow("window", cv2.WINDOW_NORMAL);
@@ -98,7 +98,7 @@ while True:
             cleanAndExit()
     
     print("\nYour Weight is: ",round(val,2))
-    val = int(val)
+    #val = int(val)
     processing = False
 
 
@@ -113,8 +113,8 @@ while True:
         if isHeightValid == False:
             key = cv2. waitKey(2)
             webcam = cv2.VideoCapture(0)
-            webcam.set(3, 1920)  
-            webcam.set(4, 1080)
+            webcam.set(3, 1280)  
+            webcam.set(4, 960)
             webcam.set(cv2.CAP_PROP_AUTOFOCUS, 0)
 
             check, frame = webcam.read()
@@ -156,7 +156,7 @@ while True:
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             blur = cv2.GaussianBlur(gray, (9, 9), 2)
 
-            edged = cv2.Canny(blur, 60, 100)
+            edged = cv2.Canny(blur, 100, 100)
             edged = cv2.dilate(edged, None, iterations=1)
             edged = cv2.erode(edged, None, iterations=1)
 
@@ -186,7 +186,7 @@ while True:
             box = perspective.order_points(box)
             (tl, tr, br, bl) = box
             dist_in_pixel = euclidean(tl, tr)
-            dist_in_cm = 19.8
+            dist_in_cm = 20
             pixel_per_cm = dist_in_pixel/dist_in_cm
 
 
@@ -211,7 +211,7 @@ while True:
 
                 height = euclidean(tr, br)/pixel_per_cm
                 cv2.putText(image, "{:.1f}cm".format(height), (int(mid_pt_verticle[0] + 10), int(mid_pt_verticle[1])), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 2)
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
                 
 
                 #this will assign the value of height of the person
@@ -220,6 +220,7 @@ while True:
 
 
         #show_images([image])
+        print('weight: ', val)
         print('height: ',userHeight)
         if userHeight < 100:
             isHeightValid = False
