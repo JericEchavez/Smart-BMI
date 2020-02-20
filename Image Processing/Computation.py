@@ -42,7 +42,7 @@ def cleanAndExit():
 hx = HX711(5, 6)
 
 hx.set_reading_format("MSB", "MSB")
-hx.set_reference_unit(-6300.82) #-7846.82
+hx.set_reference_unit(23038) #-7846.82
 
 hx.reset()
 hx.tare()
@@ -186,7 +186,7 @@ while True:
             box = perspective.order_points(box)
             (tl, tr, br, bl) = box
             dist_in_pixel = euclidean(tl, tr)
-            dist_in_cm = 20
+            dist_in_cm = 19.1
             pixel_per_cm = dist_in_pixel/dist_in_cm
 
 
@@ -220,8 +220,8 @@ while True:
 
 
         #show_images([image])
-        print('weight: ', val)
-        print('height: ',userHeight)
+        print('weight: ', round(val,1))
+        print('height: ', round(userHeight, 1))
         if userHeight < 100:
             isHeightValid = False
         else:
@@ -258,8 +258,8 @@ while True:
     
     
     
-    f_Weight = val
-    f_Height = round(userHeight,2)
+    f_Weight = round(val, 1)
+    f_Height = round(userHeight,1)
     
     heightInMeters = f_Height/100
     squared = heightInMeters*heightInMeters
@@ -271,7 +271,7 @@ while True:
     bmiNumbers = [18.4, 24.9, 29.9]
     s_BmiCategory = bmiCategoryList[bisect.bisect_left(bmiNumbers,f_Bmi)]
 
-    print("\nYour BMI is: ",round(f_Bmi,2),"Kg/m2. That means",s_BmiCategory)
+    print("Your BMI is: ",round(f_Bmi,1),"Kg/m2. That means",s_BmiCategory)
 
     #Suggestions
     if s_BmiCategory == "Underweight":
@@ -292,7 +292,7 @@ while True:
     
     s_Height = str(f_Height)  # float to string conversion
     s_Weight = str(f_Weight)
-    s_Bmi = str(round(f_Bmi,2))
+    s_Bmi = str(round(f_Bmi,1))
     
     
     os.system("sudo chmod a+w /dev/usb/lp0")
